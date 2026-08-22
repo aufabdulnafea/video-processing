@@ -21,6 +21,7 @@ runs the job through `ffmpeg`/`ffprobe`, and uploads the result back to S3.
 - [Development](#development)
 - [CI/CD](#cicd)
 - [Operational notes](#operational-notes)
+- [License](#license)
 
 ## Architecture
 
@@ -332,3 +333,22 @@ into `main`:
   the same Redis; there's no leader election or per-replica coordination
   needed since `BRPOP` already fairly distributes queue items across
   connections.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
+
+Every package actually bundled into the compiled binary (`pino`,
+`pino-pretty`, `zod`, and their full transitive dependency tree) is MIT,
+ISC, or BSD-3-Clause; dev-only tooling (`biome`, `fallow`, `typescript`) adds
+Apache-2.0 into the mix, but none of it ships in the built artifact. All of
+it is permissive and compatible with MIT.
+
+The Docker image separately bundles `ffmpeg`, which Alpine builds with
+`--enable-gpl` (GPL-licensed, via `libx264` and friends). It's invoked as an
+external subprocess — never linked into the compiled binary — which is the
+standard "mere aggregation" boundary that keeps this project's own MIT-licensed
+source unaffected. The image itself is still, in effect, a GPL+MIT
+aggregate: redistributing the *image* means redistributing GPL-licensed
+binaries alongside MIT-licensed ones, same as any other tool that ships
+ffmpeg in a container.

@@ -3,6 +3,7 @@
     "module": "index.ts",
     "type": "module",
     "private": true,
+    "license": "MIT",
     "scripts": {
         "dev": "bun src/index.ts",
         "build": "bun build ./src/index.ts --compile --minify --outfile ./build/video-processing",
