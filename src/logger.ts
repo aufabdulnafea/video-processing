@@ -7,13 +7,13 @@ const isDevelopment = config.NODE_ENV !== "production";
 // Create the stream inline so Bun doesn't spawn worker threads
 const stream = isDevelopment
     ? pinoPretty({
-        colorize: true,
-        translateTime: "HH:MM:ss",
-        ignore: "pid,hostname",
-        singleLine: false,
-        levelFirst: true,
-        messageFormat: "{msg}",
-    })
+          colorize: true,
+          translateTime: "HH:MM:ss",
+          ignore: "pid,hostname",
+          singleLine: false,
+          levelFirst: true,
+          messageFormat: "{msg}",
+      })
     : pino.destination(1); // Write directly to stdout in production
 
 export const logger = pino(
@@ -24,5 +24,5 @@ export const logger = pino(
         },
         timestamp: pino.stdTimeFunctions.isoTime,
     },
-    stream
+    stream,
 );

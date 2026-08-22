@@ -1,5 +1,6 @@
 curl -X POST http://localhost:3000/jobs \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${API_KEY}" \
   -d '{
     "input": {
       "bucket": "hiplando-public",
