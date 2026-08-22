@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Bun version pinned to match the Dockerfile's runtime image.
-  BUN_VERSION: "1.3.5"
+  # Bun version pinned to match the Dockerfile's runtime image (see .bun-version).
+  BUN_VERSION: "1.4.0"
 
 jobs:
   test:
