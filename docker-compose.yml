@@ -1,0 +1,65 @@
+name: video-transcoder
+
+services:
+  # ============================================================
+  # 1. Dedicated Redis Queue Service
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: video-processing-redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel notice
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - transcoder-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  # ============================================================
+  # 2. Video Processing Microservice
+  # ============================================================
+  video-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video-processing-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Automatically points to the 'redis' container service defined above
+      - REDIS_URL=redis://redis:6379
+    # Passes all S3, AWS, QUEUE_NAME, and CONCURRENCY variables from your .env
+    env_file:
+      - .docker.env
+    volumes:
+      - transcoder_tmp:/tmp/transcoder
+    networks:
+      - transcoder-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+# ============================================================
+# Networks & Persistent Volumes
+# ============================================================
+networks:
+  transcoder-net:
+    driver: bridge
+
+volumes:
+  redis_data:
+  transcoder_tmp:
