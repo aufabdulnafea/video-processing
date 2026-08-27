@@ -10,15 +10,14 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
-    "format": "prettier --write .",
-    "check": "biome check --write . && prettier --write ."
+    "format": "biome format --write .",
+    "check": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
     "@types/bun": "^1.4.0",
     "@types/node": "^26.2.0",
     "fallow": "3.17.0",
-    "prettier": "^3.9.6",
     "typescript": "^5.9.3"
   },
   "engines": {

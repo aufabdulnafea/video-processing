@@ -37,11 +37,8 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit -p tsconfig.json
 
-      - name: Lint
+      - name: Lint & format check
         run: bunx biome ci .
-
-      - name: Format check
-        run: bunx prettier --check .
 
       - name: Unit tests
         run: bun test

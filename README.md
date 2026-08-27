@@ -424,17 +424,17 @@ bun install          # install dependencies
 bun run dev           # run the service (bun --hot works too for local iteration)
 bun test              # unit tests (bun:test) — pure pipeline logic, no ffmpeg/Redis/S3/NATS needed
 bun run typecheck      # tsc --noEmit
-bun run lint           # biome check . (lint only -- formatting is Prettier's job, see below)
-bun run format         # prettier --write .
-bun run check          # biome check --write . + prettier --write . in one shot
+bun run lint           # biome check . (lint + format check)
+bun run format         # biome format --write .
+bun run check          # biome check --write . (lint + format, fixes applied)
 bunx fallow            # dead code / duplication / complexity analysis
 ```
 
-- **Biome** (`biome.json`) is lint-only here — its formatter and import-sort
-  assist are both disabled. **Prettier** (`.prettierrc.json`: 130-char
-  width, trailing commas, double quotes) owns formatting instead. `bun run
-lint` / `bun run format` run each standalone; `bun run check` does both
-  with fixes applied.
+- **Biome** (`biome.json`) owns both linting and formatting (130-char width,
+  2-space indent, trailing commas, double quotes); the import-sort assist is
+  left disabled. `bun run lint` checks, `bun run format` writes formatting
+  only, and `bun run check` applies lint + format fixes in one shot. Markdown
+  and YAML are not formatter-managed (Biome doesn't format them).
 - **Fallow** (installed as a dev dependency) analyzes dead code, duplication,
   and complexity hotspots. `bunx fallow audit --base main` scopes it to just
   the files your branch changed.
@@ -452,7 +452,7 @@ lint` / `bun run format` run each standalone; `bun run check` does both
 `.github/workflows/ci.yml`, on every push to `main`/`v*` tags and every PR
 into `main`:
 
-1. **`test` job** — typecheck, `biome ci` (lint), `prettier --check` (format),
+1. **`test` job** — typecheck, `biome ci` (lint + format check),
    `bun test`, a build sanity check, and (PRs only, non-blocking) `fallow
 audit` scoped to the diff.
 2. **`docker` job** (only after `test` passes) — builds the image on every
@@ -499,7 +499,7 @@ Every package bundled into the compiled binary (`pino`, `pino-pretty`,
 `zod`, the `@nats-io/*` clients, the `@opentelemetry/*` SDK, and
 `@prometheus-io/client`, plus their full transitive dependency trees) is
 MIT, ISC, BSD-3-Clause, or Apache-2.0; dev-only tooling (`biome`, `fallow`,
-`typescript`, `prettier`) adds nothing further since none of it ships in the
+`typescript`) adds nothing further since none of it ships in the
 built artifact. All of it is permissive and compatible with MIT.
 
 The Docker image separately bundles `ffmpeg`, which Alpine builds with
