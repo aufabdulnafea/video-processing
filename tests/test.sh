@@ -1,4 +1,4 @@
-curl -X POST http://localhost:3000/jobs \
+curl -X POST http://localhost:3000/api/v1/jobs \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ${API_KEY}" \
   -d '{
